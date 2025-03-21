@@ -1,2 +1,28 @@
-# Auto detect text files and perform LF normalization
+# Normaliza quebras de linha para evitar problemas entre Windows/Linux
 * text=auto
+
+# Arquivos Python como texto puro
+*.py text
+
+# Arquivos de configuração YAML e JSON como texto
+*.yml text
+*.yaml text
+*.json text
+
+# Evita conflitos de binários em imagens e fontes
+*.png binary
+*.jpg binary
+*.gif binary
+*.ttf binary
+*.woff binary
+
+# Define que os arquivos de build não são modificáveis
+/build/* linguist-vendored
+/node_modules/* linguist-vendored
+.dart_tool/* linguist-vendored
+
+# Força o Git a reconhecer o código principal como Python, Dart, JavaScript e HTML
+*.py linguist-language=Python
+*.dart linguist-language=Dart
+*.js linguist-language=JavaScript
+*.html linguist-language=HTML
