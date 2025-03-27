@@ -33,3 +33,7 @@ A Django REST Web App is a web application built with Django and Django REST Fra
  - create requirements.txt
 
  - pip install -r requirements.txt
+ criar back em django
+ - Django-admin startproject backend
+ - cd backend
+ - python manage.py startapp api
