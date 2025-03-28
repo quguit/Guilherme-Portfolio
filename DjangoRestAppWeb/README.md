@@ -37,3 +37,8 @@ A Django REST Web App is a web application built with Django and Django REST Fra
  - Django-admin startproject backend
  - cd backend
  - python manage.py startapp api
+
+ Na pasta Backend
+ - python manage.py makemigrations
+ - python manage.py migrate
+ - python manage.py runserver (localhost:8000)

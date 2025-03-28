@@ -11,5 +11,5 @@ class CreateUserView(generics.CreateAPIView):
     API view to create a new user.
     """
     queryset = User.objects.all()
-    serializer_class = User
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
