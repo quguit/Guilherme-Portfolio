@@ -11,7 +11,7 @@ Sistema web para reserva de salas e laboratórios da UFRB – com autenticação
 
 ## 🧩 O Problema
 
-Na realidade atual da UFRB, a **reserva de salas é feita manualmente na portaria**, exigindo a presença do professor para cada confirmação para um aluno. Esse processo gera:
+Na realidade atual da UFRB, a **reserva de salas é feita manualmente na portaria**, exigindo a presença do professor para cada confirmação para um aluno. Esse processo é:
 
 - **Altamente burocrático** para os alunos;
 - Exige **autorização presencial ou aprovação da Reitoria**;
