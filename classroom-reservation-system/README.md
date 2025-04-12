@@ -75,7 +75,7 @@ O desenvolvimento foi organizado com metodologia ágil (Kanban), utilizando o Ji
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/classroom-reservation-system.git
+git clone https://github.com/quguit/Guilherme-Portifolio/classroom-reservation-system.git
 
 # Acesse o diretório
 cd classroom-reservation-system
@@ -83,7 +83,7 @@ cd classroom-reservation-system
 # Instale as dependências
 npm install
 
-# Configure o .env com as variáveis necessárias (use .env.example como base)
+# Configure o .env com as variáveis necessárias 
 
 # Execute o projeto
 npm start
