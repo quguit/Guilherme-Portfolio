@@ -43,7 +43,7 @@ O *Classroom Reservation System* digitaliza e automatiza esse processo, permitin
 | Frontend     | HTML5, CSS3, [Bootstrap](https://getbootstrap.com/), JS puro |
 | Autenticação | JWT, Bcrypt                 |
 | E-mail       | Nodemailer (SMTP)           |
-| Projeto      | [Jira Software](https://www.atlassian.com/software/jira) (Kanban) |
+| Projeto      | [Jira Software]([https://www.atlassian.com/software/jira](https://classroom-reservation-system.atlassian.net/jira/software/projects/CPG/summary)) (Kanban) |
 
 ---
 
