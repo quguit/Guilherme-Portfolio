@@ -43,9 +43,21 @@ O *Classroom Reservation System* digitaliza e automatiza esse processo, permitin
 | Frontend     | HTML5, CSS3, [Bootstrap](https://getbootstrap.com/), JS puro |
 | Autenticação | JWT, Bcrypt                 |
 | E-mail       | Nodemailer (SMTP)           |
-| Projeto      | [Jira Software]([https://www.atlassian.com/software/jira](https://classroom-reservation-system.atlassian.net/jira/software/projects/CPG/summary)) (Kanban) |
+| Projeto      | Jira Software (Kanban) |
 
 ---
+🧑‍💻 Gerenciamento do Projeto
+
+O desenvolvimento foi organizado com metodologia ágil (Kanban), utilizando o Jira da Atlassian para dividir o progresso em:
+
+- Planejamento e modelagem
+
+- Backend com Express + MongoDB
+
+- Frontend com Bootstrap
+
+- Integração, testes e deploy
+[🔗 Acesse o board Kanban aqui](https://classroom-reservation-system.atlassian.net/jira/software/projects/CPG/summary)
 
 ## 📋 Funcionalidades Principais
 
@@ -75,3 +87,10 @@ npm install
 
 # Execute o projeto
 npm start
+```
+
+✍️ Autor
+
+Desenvolvido por Guilherme Nascimento @quguit
+Graduando em Engenharia de Computação
+Desenvolvedor de aplicações web com foco em backend, banco de dados e segurança de sistemas.
