@@ -91,6 +91,6 @@ npm start
 
 ✍️ Autor
 
-Desenvolvido por Guilherme Nascimento @quguit
-Graduando em Engenharia de Computação
-Desenvolvedor de aplicações web com foco em backend, banco de dados e segurança de sistemas.
+Desenvolvido por Guilherme Nascimento @quguit \
+Graduando em Engenharia de Computação \
+Desenvolvedor Full-stack.
