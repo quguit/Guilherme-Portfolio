@@ -1,12 +1,14 @@
 🎯 MVP – Sistema de Reserva de Salas/Laboratórios
-🔧 Tecnologias Utilizadas
-Camada	Tecnologia
-Frontend	HTML5, CSS3, JavaScript, Bootstrap
-Backend	Node.js com Express.js (leve e rápido)
-Banco de Dados	MongoDB (NoSQL)
-Autenticação	JWT (JSON Web Tokens), Bcrypt (hash de senha)
-Outros	Nodemailer (e-mails), Mongoose (ODM)
-🧩 Funcionalidades do MVP
+🔧 Tecnologias Previstas
+---
+Frontend	HTML5, CSS3, JavaScript, Bootstrap \
+Backend	Node.js com Express.js (leve e rápido) \
+Banco de Dados	MongoDB (NoSQL) \
+Autenticação	JWT (JSON Web Tokens), Bcrypt (hash de senha) \
+Outros	Nodemailer (e-mails), Mongoose (ODM) 
+
+🧩 Funcionalidades
+---
 🔐 Autenticação (Login/Cadastro)
 
     Cadastro e login com validação por tipo de usuário (Aluno, Professor, Técnico, Funcionário).
@@ -117,7 +119,7 @@ Reservas
 ```
 
 📅 Metodologia de Projeto
-Kanban ou Scrum
+Kanban \
 🧪 Testes
 
     Testes unitários para API (Jest ou Mocha)
@@ -126,14 +128,3 @@ Kanban ou Scrum
 
     Testes de autenticação, fluxos de reserva e validações
 
-🧠 Futuras Melhorias (pós-MVP)
-
-    Integração com sistema de leitura de QRCode (para reserva via chaveiro)
-
-    Notificações por push
-
-    Dashboard com estatísticas de uso
-
-    CRUD avançado de usuários com permissões diferenciadas
-
-    Upload de arquivos/documentos para comprovação de reservas
