@@ -11,10 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 
-//test route
-app.get('/', (req, res) => {
-    res.send('API Rodando ✔️');
-})
+//route
+app.use('/api/user', require('./routes/user'));
 
 //start server
 const PORT = process.env.PORT || 3000;

@@ -23,7 +23,7 @@ const roomSchema = new mongoose.Schema({
     status_clean: {
         type: String,
         enum: ['clean', 'dirty', 'cleaning'],
-        default: 'limpo'
+        default: 'clean'
     },
     observations: {
         type: String,
