@@ -26,21 +26,29 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Check if the user exists
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({ message: 'Usuário não encontrado' });
         }
 
+        // validate password 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Senha incorreta' });
         }
+
+        // Generate JWT token
         const token = jwt.sign(
-            { id: user._id, type_user: user.type_user },
+            { 
+                id: user._id, 
+                type_user: user.type_user 
+            },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
+        // Return user data and token
         res.status(200).json({
             message: 'Login realizado com sucesso',
             token,
@@ -49,11 +57,11 @@ exports.login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 type_user: user.type_user,
-                identification: user.identification
             }
         });
+
     } catch (err) {
         res.status(500).json({erro: 'Erro ao fazer login', details: err.message });
         
     }
-}
+};
