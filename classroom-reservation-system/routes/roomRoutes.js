@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 const RoomController = require('../controllers/RoomController');
 
-router.post('/', RoomController.register);
+router.post('/', RoomController.register); // Isso equivale a: POST /api/rooms
 
 module.exports = router;
