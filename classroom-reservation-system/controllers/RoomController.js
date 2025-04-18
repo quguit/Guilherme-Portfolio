@@ -1,5 +1,5 @@
 const Room = require('../models/Room');
-
+// Controller for handling room registration
 exports.register = async (req, res) => {
     try {
         const {
@@ -33,5 +33,24 @@ exports.register = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ error: "erro ao cadastrar a sala", detalhes: error.message });
+    }
+};
+
+// Controller for get room with filters
+exports.list = async (req, res) => {
+    try {
+        const { number, type, capacity, status_clean, resources } = req.query;
+        const filters = {};
+
+        if (number) filters.number = number;
+        if (type) filters.type = type;
+        if (capacity) filters.capacity = { $gte: Number(capacity)}; //operador gte (maior ou igual)
+        if (status_clean) filters.status_clean = status_clean;
+        if (resources) filters.resources = { $in: [resources] }; //operador in (pertence a lista)
+
+        const rooms = await Room.find(filters).populate('responsibles', 'name email');
+        res.status(200).json({total: rooms.length, rooms});
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao buscar as salas", detalhes: error.message });
     }
 };
