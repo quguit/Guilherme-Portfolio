@@ -54,3 +54,26 @@ exports.list = async (req, res) => {
         res.status(500).json({ error: "Erro ao buscar as salas", detalhes: error.message });
     }
 };
+
+// Controller for update information
+exports.update = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const updateRoom = await Room.findByIdAndUpdate(id, req.body, {
+            new: true,            // retorna o documento atualizado
+            runValidators: true   // aplica validações do modelo (schema)
+        });
+
+        if(!updateRoom) {
+            return res.status(404).json({ error: 'Sala não encontrada.' });
+        }
+
+        res.status(200).json({
+            message: 'Sala atualizada com sucesso.',
+            room: updateRoom
+        });
+    } catch (error) {
+        res.status(500).json({ error:"Erro ao a tualizar sala", detalhes: error.message });
+    }
+};

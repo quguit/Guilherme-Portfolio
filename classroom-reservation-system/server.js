@@ -14,6 +14,8 @@ app.use(express.json()); // Habilita parsing de JSON
 // ✅ Rotas // No plural por convenção RESTful
 app.use('/api/users', require('./routes/userRoutes')); 
 app.use('/api/rooms', require('./routes/roomRoutes'));
+app.use('/api/bookings', require('./routes/bookingRoutes'));
+
 
 // ✅ Iniciar servidor
 const PORT = process.env.PORT || 7000;
