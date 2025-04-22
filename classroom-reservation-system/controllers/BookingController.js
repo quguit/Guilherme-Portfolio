@@ -1,4 +1,5 @@
 const Booking = require('../models/Booking');
+const Room = require('../models/Room');
 
 exports.create = async (req, res) => {
   try {
@@ -49,5 +50,50 @@ exports.listByUser = async (req, res) => {
       error: 'Erro ao buscar reservas',
       detalhes: error.message
     });
+  }
+};
+
+// Atualizar status da reserva
+exports.updateStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const userId = req.user.id;
+    const userType = req.user.type_user;
+
+    //validate  router
+    if (!['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ error: 'Status inválido.' });
+    }
+    //busca a reserva
+    const booking = await Booking.findById(id);
+    if (!booking) {
+      return res.status(404).json({ error: 'Reserva não encontrada.' });
+    }
+    //buscar a sala vinculada
+    const room = await Room.findById(booking.room_id);
+
+    //verificar se o usuario é professor
+    if(userType === 'teacher') {
+      return res.status(403).json({ error: 'Apenas professores podem aprovar ou rejeitar reservas.' });
+    }
+
+    //verifica se a sala tem responsáveis
+    if (room.responsible.length > 0) {
+      const isResponsible = room.responsible.some(responsible => responsible.toString() === userId);
+      if (!isResponsible) {
+        return res.status(403).json({ error: 'Você não tem permissão para aprovar ou rejeitar esta reserva.' });
+      }
+    }
+    // Atualiza o status da reserva
+    booking.status = status;
+    await booking.save();
+
+    res.status(200).json({
+      message:'Reserva ${status} com sucesso.',
+      booking
+     });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar status de reserva.', detalhes: error.message });
   }
 };

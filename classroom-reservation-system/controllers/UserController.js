@@ -43,10 +43,7 @@ exports.login = async (req, res) => {
             { 
                 id: user._id, 
                 type_user: user.type_user 
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+            }, process.env.JWT_SECRET, { expiresIn: '1h' } );
 
         // Return user data and token
         res.status(200).json({
