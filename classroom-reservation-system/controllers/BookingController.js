@@ -1,3 +1,4 @@
+
 const Booking = require('../models/Booking');
 const Room = require('../models/Room');
 
@@ -35,9 +36,9 @@ exports.create = async (req, res) => {
 // Listar todas as reservas por ID do usuário
 exports.listByUser = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { user_id } = req.params;
 
-    const bookings = await Booking.find({ user_id: userId })
+    const bookings = await Booking.find({ user_id: user_id })
       .populate('room_id', 'number type')
       .populate('user_id', 'name email');
 
@@ -56,13 +57,13 @@ exports.listByUser = async (req, res) => {
 // Atualizar status da reserva
 exports.updateStatus = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status } = req.body;
+    const { id } = req.params; //ID da reserva
+    const { status_booking } = req.body;
     const userId = req.user.id;
     const userType = req.user.type_user;
 
     //validate  router
-    if (!['approved', 'rejected'].includes(status)) {
+    if (!['approved', 'rejected'].includes(status_booking)) {
       return res.status(400).json({ error: 'Status inválido.' });
     }
     //busca a reserva
@@ -72,6 +73,9 @@ exports.updateStatus = async (req, res) => {
     }
     //buscar a sala vinculada
     const room = await Room.findById(booking.room_id);
+    if (!room) {
+      return res.status(404).json({ error: 'Sala não encontrada.' });
+    }
 
     //verificar se o usuario é professor
     if(userType === 'teacher') {
@@ -79,14 +83,14 @@ exports.updateStatus = async (req, res) => {
     }
 
     //verifica se a sala tem responsáveis
-    if (room.responsible.length > 0) {
+    if (room.responsibles && room.responsibles.length > 0) {
       const isResponsible = room.responsible.some(responsible => responsible.toString() === userId);
       if (!isResponsible) {
         return res.status(403).json({ error: 'Você não tem permissão para aprovar ou rejeitar esta reserva.' });
       }
     }
     // Atualiza o status da reserva
-    booking.status = status;
+    booking.status_booking = status_booking;
     await booking.save();
 
     res.status(200).json({
