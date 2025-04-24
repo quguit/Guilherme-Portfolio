@@ -15,6 +15,12 @@ router.get('/user/:user_id', auth, BookingController.listByUser);
 
 //PATCH: devolução da chave
 router.patch('/:id/return', auth, permit('teacher', 'servant'), BookingController.registerKeyReturn);
+// test api
+//URL PATCH http://localhost:7000/api/bookings/<id>/return
+//Headers: Authorization: Bearer <seu_token>
+// Content-Type: application/json
+//não precisa body pois é uma atualização simples de estado
+
 
 module.exports = router;
 // This code defines a route for listing reservations by user ID.

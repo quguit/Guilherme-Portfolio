@@ -5,12 +5,17 @@ const Room = require('../models/Room');
 // create a booking
 exports.create = async (req, res) => {
   try {
-    const { room_id, start_time, end_time, purpose } = req.body;
+    const { room_id, start_time, end_time, purpose , requested_teacher} = req.body;
     const user_id = req.user.id;
+    const user_type = req.user.type_user;
 
-
-    if (!room_id || !start_time || !end_time) {
+    if (!room_id || !start_time || !end_time || !purpose) {
       return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
+    }
+
+    const room = await Room.findById(room_id).populate('responsibles', 'name email');
+    if (!room) {
+      return res.status(404).json({ error: 'Sala não encontrada.' });
     }
 
     //verifica conflitos de reserva
@@ -33,6 +38,12 @@ exports.create = async (req, res) => {
       });
     }      
 
+    //regras de acesso 
+    if (user_type === 'student') {
+      if (room.responsibles.length > 0 && !requested_teacher) {
+        return res.status(403).json({ error: 'Sala exige professor responsável. Selecione um professor para solicitar aprovação.' });
+      }
+    }
     const booking = await Booking.create({
       user_id,
       room_id,
