@@ -13,5 +13,8 @@ router.post('/', auth, BookingController.create);
 // rota para listar reservas por usuário (autenticado)
 router.get('/user/:user_id', auth, BookingController.listByUser);
 
+//PATCH: devolução da chave
+router.patch('/:id/return', auth, permit('teacher', 'servant'), BookingController.registerKeyReturn);
+
 module.exports = router;
 // This code defines a route for listing reservations by user ID.
