@@ -7,12 +7,11 @@ Este repositório contém projetos desenvolvidos com **Python, Dart, Node.js, HT
 - **Frontend:** HTML5, CSS, Bootstrap, Handlebars
 - **Mobile:** Flutter (Dart)
 - **Banco de Dados:** MySQL, PostgreSQL, MongoDB
-- **DevOps:** Docker, Kubernetes, CI/CD
+- **DevOps:** Docker
 
 ## 📌 Projetos Destacados
-- **📱 Aplicativo Flutter:** Sistema de reserva de salas
-- **🌍 API REST:** Backend com FastAPI para integração com frontend
-- **⚙️ Automação:** Script Python para análise de ações do mercado
+- **📱 Aplicativo JavaScript:** Sistema de reserva de salas
+
 
 ## 🚀 Como Rodar os Projetos
 Cada pasta contém um `README.md` com instruções específicas para rodar o projeto.
