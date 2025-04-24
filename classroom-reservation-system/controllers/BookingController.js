@@ -49,7 +49,8 @@ exports.create = async (req, res) => {
       room_id,
       start_time,
       end_time,
-      purpose
+      purpose,
+      status_booking: user_type === 'teacher' ? 'approved' : 'pending',
     });
 
     res.status(201).json({
