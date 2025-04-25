@@ -153,6 +153,31 @@ exports.listByUser = async (req, res) => {
       .populate('room_id', 'number type')
       .populate('user_id', 'name email');
 
+    const formatted = bookings.map(b => ({
+      id: b._id,
+      date: {
+        start: b.start_time,
+        end: b.end_time
+      },
+      room: {
+        number: b.room_id?.number || 'Sala não encontrada',
+        type: b.room_id?.type || 'Tipo não encontrado'
+      },
+      person_in_charge: {
+        name: b.user_id?.name || 'Usuário não encontrado',
+        email: b.user_id?.email || 'Email não encontrado'
+      },
+      status: b.status_booking,
+      key_return: b.key_return,
+      purpose: b.purpose,
+      responsible_teachers: room_id?.responsibles.map(r => ({
+        name: r.name,
+        email: r.email
+      })),
+      
+
+    }));
+
     res.status(200).json({
       total: bookings.length,
       bookings
