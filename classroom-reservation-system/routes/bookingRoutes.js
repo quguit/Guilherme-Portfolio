@@ -4,11 +4,14 @@ const BookingController = require('../controllers/BookingController');
 const auth = require('../middlewares/authMiddleware');
 const permit = require('../middlewares/roleMiddleware');
 
+const { validateBookingCreate } = require('../middlewares/bookingValidation');
+
+
 // rota acessível apenas por professores
 router.put('/:id/status', auth, permit('teacher'), BookingController.updateStatus);
 
 // rota para qualquer usuário autenticado
-router.post('/', auth, BookingController.create);
+router.post('/', auth, validateBookingCreate, BookingController.create);
 
 // rota para listar reservas por usuário (autenticado)
 router.get('/user/:user_id', auth, BookingController.listByUser);

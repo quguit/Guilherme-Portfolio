@@ -5,7 +5,8 @@ const roomSchema = new mongoose.Schema({
     number: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     type:{
         type: String,
@@ -14,7 +15,9 @@ const roomSchema = new mongoose.Schema({
     },
     capacity: {
         type: Number,
-        required: true
+        required: true,
+        min: [1, 'A sala deve ter pelo menos 1 lugar'],
+        max: [100, 'A sala não pode ter mais de 100 lugares']
     },
     resources: {
         type: [String], 
@@ -27,7 +30,8 @@ const roomSchema = new mongoose.Schema({
     },
     observations: {
         type: String,
-        default: ''
+        default: '',
+        trim: true
     },
     responsibles: [{
         type: mongoose.Schema.Types.ObjectId,

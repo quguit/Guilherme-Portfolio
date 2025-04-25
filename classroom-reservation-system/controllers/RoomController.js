@@ -1,6 +1,6 @@
 const Room = require('../models/Room');
 // Controller for handling room registration
-exports.register = async (req, res) => {
+exports.create = async (req, res) => {
     try {
         const {
             number,
