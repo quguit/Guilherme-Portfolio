@@ -1,0 +1,23 @@
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans', sans-serif;
+  }
+  
+.card {
+  box-shadow: 0px 10px 40px #00000056;
+}
+
+input::placeholder {
+  color: #f0ffff94 !important;
+}
+
+@media (max-width: 768px) {
+  .left-login h1 {
+    display: none;
+  }
+}
+
+
