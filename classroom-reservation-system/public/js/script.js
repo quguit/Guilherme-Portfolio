@@ -1,4 +1,7 @@
 function showLogin() {
+  const navbar = document.getElementById('navbar');
+  navbar.classList.add('bg-dark');
+  navbar.classList.remove('bg-success');
     document.getElementById('loginSection').classList.remove('d-none');
     document.getElementById('registerSection').classList.add('d-none');
     document.getElementById('blogin').className = 'btn btn-success btn-block me-3 ';
@@ -6,10 +9,13 @@ function showLogin() {
 
   }
   
-  function showRegister() {
+function showRegister() {
+  const navbar = document.getElementById('navbar');
+  navbar.classList.remove('bg-dark');
+  navbar.classList.add('bg-success');
     document.getElementById('registerSection').classList.remove('d-none');
     document.getElementById('loginSection').classList.add('d-none');
-    document.getElementById('bregister').className = 'btn btn-success btn-block me-5';
+    document.getElementById('bregister').className = 'btn btn-outline-dark btn-white me-5';
     document.getElementById('blogin').className = 'btn btn-outline-light me-3';
   }
   
