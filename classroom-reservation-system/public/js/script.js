@@ -1,16 +1,16 @@
 function showLogin() {
     document.getElementById('loginSection').classList.remove('d-none');
     document.getElementById('registerSection').classList.add('d-none');
-    document.getElementById('blogin').className = 'btn btn-success btn-lg btn-block me-3 ';
-    document.getElementById('bregister').className = 'btn btn-outline-light me-4';
+    document.getElementById('blogin').className = 'btn btn-success btn-block me-3 ';
+    document.getElementById('bregister').className = 'btn btn-outline-light me-5';
 
   }
   
   function showRegister() {
     document.getElementById('registerSection').classList.remove('d-none');
     document.getElementById('loginSection').classList.add('d-none');
-    document.getElementById('bregister').className = 'btn btn-success btn-lg btn-block shadow-sm me-4';
-    document.getElementById('blogin').className = 'btn btn-outline-light btn-lg btn-block shadow-sm me-3';
+    document.getElementById('bregister').className = 'btn btn-success btn-block me-5';
+    document.getElementById('blogin').className = 'btn btn-outline-light me-3';
   }
   
   function updateIdentificationField() {
