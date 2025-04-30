@@ -1,0 +1,64 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-container d-flex">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-dark text-white p-3">
+      <h4 class="mb-4">Painel Principal</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link text-white" href="#">Início</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#">Reservas</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#">Salas</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#">Laboratórios</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#">Perfil</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content p-4 w-100">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Bem-vindo, <span id="userName">Usuário</span>!</h2>
+        <button class="btn btn-outline-danger" onclick="logout()">Sair</button>
+      </div>
+
+      <div id="dashboardCards" class="row g-4">
+        <!-- Cards de exemplo -->
+        <div class="col-md-4">
+          <div class="card text-white bg-success h-100 shadow">
+            <div class="card-body">
+              <h5 class="card-title">Reservas ativas</h5>
+              <p class="card-text fs-4">12</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-white bg-primary h-100 shadow">
+            <div class="card-body">
+              <h5 class="card-title">Salas Disponíveis</h5>
+              <p class="card-text fs-4">8</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-white bg-warning h-100 shadow">
+            <div class="card-body">
+              <h5 class="card-title">Chaves Pendentes</h5>
+              <p class="card-text fs-4">3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>

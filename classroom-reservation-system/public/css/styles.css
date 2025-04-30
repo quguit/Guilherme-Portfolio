@@ -24,7 +24,7 @@ input::placeholder {
   border-color: #30bb7a; /* verde Bootstrap (success) */
   box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25); /* sombra verde */
 }
-/* #navbar {
-  transition: background-color 0.5s ease;
-} */
+#navbar {
+  transition: background-color 2s ease;
+}
 

@@ -15,7 +15,7 @@ function showRegister() {
   navbar.classList.add('bg-success');
     document.getElementById('registerSection').classList.remove('d-none');
     document.getElementById('loginSection').classList.add('d-none');
-    document.getElementById('bregister').className = 'btn btn-outline-dark btn-white me-5';
+    document.getElementById('bregister').className = 'btn btn-outline-dark btn-block me-5';
     document.getElementById('blogin').className = 'btn btn-outline-light me-3';
   }
   
