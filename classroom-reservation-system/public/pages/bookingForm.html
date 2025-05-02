@@ -1,0 +1,39 @@
+<!-- Formulário de solicitação de reserva-->
+<!--
+    Este arquivo contém o formulário de solicitação de reserva.
+    O formulário coleta informações do usuário, como nome, e-mail, telefone, data de início e término da reserva,
+    número de pessoas e uma mensagem adicional.-->
+
+ <div class="container">
+    <h2 class="mb-4 text-success">Solicitar Reserva</h2>
+    <form id="bookingRequestForm">
+        <div class="mb-3">
+            <label for="roomSelect" class="form-label">Sala ou Laboratório</label>
+            <select class="form-select" id="roomSelect" required>
+                <option selected disabled>Selecione</option>
+                <option value="sala101">Sala 101</option>
+                <option value="labQuimica">Laboratório de Química</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="date" class="form-label">Data</label>
+            <input type="date" class="form-control" id="date" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="time" class="form-label">Horário</label>
+            <input type="time" class="form-control" id="time" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="purpose" class="form-label">Motivo da Reserva</label>
+            <textarea class="form-control" id="purpose" rows="3" placeholder="Descreva o motivo da reserva"></textarea>
+        </div>
+
+        
+        <button type="submit" class="btn btn-success"> Enviar Solicitação de Reserva</button>
+        
+    </form>
+ </div>
+ <script src="../js/bookingForm.js"></script>
