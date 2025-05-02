@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="../css/bookingForm.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container form-container mt-5">
         <h2 class="mb-4 text-success">Solicitar Reserva</h2>
         <form id="bookingRequestForm">
             <div class="mb-3">
@@ -26,26 +26,32 @@
                 </select>
             </div>
     
-            <div class="mb-3">
-                <label for="date" class="form-label">Data</label>
-                <input type="date" class="form-control" id="date" required>
-            </div>
-    
-            <div class="mb-3">
-                <label for="time" class="form-label">Horário</label>
-                <input type="time" class="form-control" id="time" required>
-            </div>
-    
-            <div class="mb-3">
-                <label for="purpose" class="form-label">Motivo da Reserva</label>
-                <textarea class="form-control" id="purpose" rows="3" placeholder="Descreva o motivo da reserva"></textarea>
-            </div>
-    
             
-            <button type="submit" class="btn btn-success"> Enviar Solicitação de Reserva</button>
-            
-        </form>
-     </div>
-     <script src="../js/bookingForm.js"></script>
+      <div class="mb-3">
+        <label for="date" class="form-label">Data</label>
+        <input type="date" class="form-control" id="date" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="startTime" class="form-label">Horário de Início</label>
+        <input type="time" class="form-control" id="startTime" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="endTime" class="form-label">Horário de Término</label>
+        <input type="time" class="form-control" id="endTime" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="reason" class="form-label">Motivo da Reserva</label>
+        <textarea class="form-control" id="reason" rows="3" required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100">Enviar Solicitação</button>
+
+    </form>
+</div>
+
+<script src="../js/bookingForm.js"></script>
 </body>
 </html>
