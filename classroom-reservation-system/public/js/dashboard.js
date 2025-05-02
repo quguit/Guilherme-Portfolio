@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
   function logout() {
-    // Simples logout simulation
+    //  logout 
     alert("Sessão encerrada.");
     window.location.href = "index.html";
   }
@@ -36,5 +36,5 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>`;
   }
 
-  // Simule aqui o tipo de usuário para testar diferentes visões:
+  //  tipo de usuário para diferentes visões:
   renderDashboard("professor"); // "aluno", "professor" ou "servidor"
