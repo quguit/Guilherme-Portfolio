@@ -38,3 +38,23 @@ function showRegister() {
   
     field.style.display = 'block';
   }
+
+fetch("http://localhost:3000/api/login", {
+  method: "POST",
+  headers: {"content-Type": "application/json"},
+  body: JSON.stringify({ email, password})
+})
+.then(response => response.json())
+.then(data => {
+  if (data.token) {
+    //save the token in local storage
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("userName", data.user.name);
+    localStorage.setItem("userType", data.user.type_user);
+
+    //redirecionar para o dashboard
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Erro ao fazer login")
+  }
+});
