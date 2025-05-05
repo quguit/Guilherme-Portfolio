@@ -9,7 +9,7 @@ exports.create = async (req, res) => {
     const user_id = req.user.id;
     const user_type = req.user.type_user;
 
-    if (!room_id || !start_time || !end_time || !purpose) {
+    if (!room_id || !start_time || !end_time || !purpose || (user_type === 'student' && !requested_teacher)) {
       return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
     }
 
@@ -39,17 +39,27 @@ exports.create = async (req, res) => {
     }      
 
     //regras de acesso 
-    if (user_type === 'student') {
-      if (room.responsibles.length > 0 && !requested_teacher) {
-        return res.status(403).json({ error: 'Sala exige professor responsável. Selecione um professor para solicitar aprovação.' });
+    if (user_type === 'student' && room.responsibles.length > 0 && !requested_teacher) {
+      return res.status(403).json({
+        error: 'Sala exige professor responsável. Selecione um professor para solicitar aprovação.'
+      });
+    }
+    
+    if (user_type === 'student' && requested_teacher) {
+      const teacherExists = await User.findById(requested_teacher);
+      if (!teacherExists || teacherExists.type_user !== 'teacher') {
+        return res.status(400).json({ error: 'Professor responsável inválido.' });
       }
     }
+    
+    
     const booking = await Booking.create({
       user_id,
       room_id,
       start_time,
       end_time,
       purpose,
+      requested_teacher: user_type === 'student' ? requested_teacher : undefined,
       status_booking: user_type === 'teacher' ? 'approved' : 'pending',
     });
 
@@ -90,13 +100,13 @@ exports.updateStatus = async (req, res) => {
     }
 
     //verificar se o usuario é professor
-    if(userType === 'teacher') {
+    if(userType !== 'teacher') {
       return res.status(403).json({ error: 'Apenas professores podem aprovar ou rejeitar reservas.' });
     }
 
     //verifica se a sala tem responsáveis
     if (room.responsibles && room.responsibles.length > 0) {
-      const isResponsible = room.responsible.some(responsible => responsible.toString() === userId);
+      const isResponsible = room.responsibles.some(responsible => responsible.toString() === userId);
       if (!isResponsible) {
         return res.status(403).json({ error: 'Você não tem permissão para aprovar ou rejeitar esta reserva.' });
       }
@@ -106,7 +116,7 @@ exports.updateStatus = async (req, res) => {
     await booking.save();
 
     res.status(200).json({
-      message:'Reserva ${status} com sucesso.',
+      message:'Reserva ${status_booking} com sucesso.',
       booking
      });
   } catch (error) {
@@ -141,7 +151,7 @@ exports.registerKeyReturn = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Erro ao registrar devolução da chave.', detalhes: error.message });
 }
-
+}
 
 
 // Listar todas as reservas por ID do usuário
@@ -170,7 +180,7 @@ exports.listByUser = async (req, res) => {
       status: b.status_booking,
       key_return: b.key_return,
       purpose: b.purpose,
-      responsible_teachers: room_id?.responsibles.map(r => ({
+      responsible_teachers: b.room_id?.responsibles.map(r => ({
         name: r.name,
         email: r.email
       })),
@@ -188,70 +198,4 @@ exports.listByUser = async (req, res) => {
       detalhes: error.message
     });
   }
-};
-
-// // Deletar uma reserva
-// exports.delete = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const userId = req.user.id;
-//     const userType = req.user.type_user;
-
-//     // Verifica se a reserva existe
-//     const booking = await Booking.findById(id);
-//     if (!booking) {
-//       return res.status(404).json({ error: 'Reserva não encontrada.' });
-//     }
-
-//     // Verifica se o usuário é o criador da reserva ou um responsável pela sala
-//     if (booking.user_id.toString() !== userId && userType !== 'admin') {
-//       return res.status(403).json({ error: 'Você não tem permissão para deletar esta reserva.' });
-//     }
-
-//     // Deleta a reserva
-//     await Booking.findByIdAndDelete(id);
-
-//     res.status(200).json({ message: 'Reserva deletada com sucesso.' });
-//   } catch (error) {
-//     res.status(500).json({ error: 'Erro ao deletar reserva.', detalhes: error.message });
-//   }
-// };
-// // Listar todas as reservas
-// exports.listAll = async (req, res) => {
-//   try {
-//     const bookings = await Booking.find()
-//       .populate('room_id', 'number type')
-//       .populate('user_id', 'name email');
-
-//     res.status(200).json({
-//       total: bookings.length,
-//       bookings
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       error: 'Erro ao buscar reservas',
-//       detalhes: error.message
-//     });
-//   }
-// };
-
-// // Listar reservas por ID da sala
-// exports.listByRoom = async (req, res) => {
-//   try {
-//     const { room_id } = req.params;
-
-//     const bookings = await Booking.find({ room_id: room_id })
-//       .populate('room_id', 'number type')
-//       .populate('user_id', 'name email');
-//     res.status(200).json({
-//       total: bookings.length,
-//       bookings
-//     });
-//   }
-//   catch (error) {
-//     res.status(500).json({
-//       error: 'Erro ao buscar reservas',
-//       detalhes: error.message
-//     });
-//   }
-// }
+}

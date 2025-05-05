@@ -33,6 +33,12 @@ const bookingSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    requested_teacher: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // ou 'Teacher', se você tiver um model separado
+        required: false
+    },
+      
 }, {
     timestamps: true
 });
