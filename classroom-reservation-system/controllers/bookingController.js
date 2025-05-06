@@ -10,7 +10,7 @@ exports.create = async (req, res) => {
     const user_type = req.user.type_user;
 
     if (!room_id || !start_time || !end_time || !purpose || (user_type === 'student' && !requested_teacher)) {
-      return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes.' }); // reavaliar este codigo, acredito que o erro está nesta interação
     }
 
     const room = await Room.findById(room_id).populate('responsibles', 'name email');
@@ -69,7 +69,7 @@ exports.create = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
+    res.status(500).json({ //expected 201 
       error: 'Erro ao criar reserva',
       detalhes: error.message
     });
