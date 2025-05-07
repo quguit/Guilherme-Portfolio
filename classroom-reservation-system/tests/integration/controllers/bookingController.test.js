@@ -12,10 +12,10 @@ Estudante sem professor → deve retornar erro 403.*/
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
-const app = require('../../app/app');
-const Booking = require('../../models/Booking');
-const Room = require('../../models/Room');
-const User = require('../../models/User');
+const app = require('../../../app/app');
+const Booking = require('../../../models/Booking');
+const Room = require('../../../models/Room');
+const User = require('../../../models/User');
 
 function generateToken(user) {
     return jwt.sign(user, process.env.JWT_SECRET || 'segredo_teste');
@@ -75,7 +75,7 @@ describe('Booking Controller - Create', () => {
     /** 1. Deve retornar 400 se campos obrigatórios estiverem ausentes */
     it('deve retornar 400 para campos obrigatórios ausentes', async () => {
         const req = { ...mockReq, body: { ...mockReq.body, purpose: undefined } };
-        await require('../../controllers/bookingController').create(req, mockRes);
+        await require('../../../controllers/bookingController').create(req, mockRes);
 
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Campos obrigatórios ausentes.' });

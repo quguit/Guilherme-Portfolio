@@ -4,6 +4,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const transporter = require('../config/mail');
 
+/**
+ * @route POST /register
+ * @desc Registra um novo usuário com nome, e-mail, senha, tipo e identificação.
+ * @access Público
+ */
 exports.register = async (req, res) => {
     try {
         const { name, email, password, type_user, identification } = req.body;
@@ -22,7 +27,11 @@ exports.register = async (req, res) => {
         res.status(400).json({ erro: 'Erro ao registrar usuário', detalhes: err.message });    }
     
 };
-
+/**
+ * @route POST /login
+ * @desc Autentica o usuário e retorna um JWT se as credenciais forem válidas.
+ * @access Público
+ */
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -63,7 +72,11 @@ exports.login = async (req, res) => {
         
     }
 };
-
+/**
+ * @route POST /recover-password
+ * @desc Gera token de recuperação e envia por e-mail.
+ * @access Público
+ */
 exports.recoverPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -103,7 +116,11 @@ exports.recoverPassword = async (req, res) => {
         res.status(500).json({ error: 'Erro ao enviar e-mail.', detalhes: error.message });
       }
 };
-
+/**
+ * @route POST /reset-password
+ * @desc Redefine a senha com base no token enviado por e-mail.
+ * @access Público
+ */
 exports.resetPassword = async (req, res) => {
     try {
         const { token, new_password, confirm_password } = req.body;
