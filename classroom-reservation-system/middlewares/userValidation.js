@@ -1,6 +1,6 @@
 const {body, validationResult } = require('express-validator');
 
-// Regras comuns para senha
+// Regras para senha
 const passwordRules = () => [
   body('new_password')
     .notEmpty().withMessage('Senha é obrigatória')

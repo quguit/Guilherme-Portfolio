@@ -143,11 +143,3 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ error: 'Erro ao redefinir a senha.', detalhes: error.message });
       }
 };
-//Test route Body(JSON)
-/*{
-  "token": "<cole o token JWT que recebeu por e-mail>",
-  "new_password": "NovaSenhaSegura123!",
-  "confirm_password": "NovaSenhaSegura123!"
-}
-  Content-Type: application/json
-  */ 
