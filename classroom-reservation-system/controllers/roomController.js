@@ -77,3 +77,22 @@ exports.update = async (req, res) => {
         res.status(500).json({ error:"Erro ao a tualizar sala", detalhes: error.message });
     }
 };
+
+exports.delete = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deleteRoom = await Room.findByIdAndDelete(id);
+        if (!deleteRoom) {
+            return res.status(404).json({ error: 'Sala não encontrada.' });
+        }
+
+        res.status(200).json({
+            message: 'Sala deletada com sucesso.',
+            room: deleteRoom
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao remover sala", detalhes: error.message });
+    }
+};
