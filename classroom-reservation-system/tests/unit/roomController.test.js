@@ -11,6 +11,7 @@ jest.mock('../../models/Room', () => ({
     find: jest.fn().mockReturnThis(),
     populate: jest.fn(),
     findByIdAndUpdate: jest.fn(),
+    findByIdAndDelete: jest.fn()
 }));
 
 describe('RoomController', () => {
@@ -359,6 +360,98 @@ describe('RoomController', () => {
                 detalhes: errorMessage
             });
         });
+    });
+
+    //Tests for delete function
+    describe('delete', () => {
+        // Test case: successfully delete a room
+        it('deve deletar uma sala com sucesso', async () => {
+            // Mock request object
+            const req = {
+                params: { id: 'roomId123' }
+            };
+
+            // Mock response object
+            const res = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn()
+            };
+
+            // Mock deleted room data
+            const deletedRoom = {
+                _id: 'roomId123',
+                number: '101',
+                type: 'Classroom',
+                capacity: 30,
+            };
+
+            // Mock Room.findByIdAndDelete to return deleted room
+            Room.findByIdAndDelete.mockResolvedValue(deletedRoom);
+
+            // Call the function
+            await roomController.delete(req, res);
+
+            // Verify that the necessary functions were called with correct parameters
+            expect(Room.findByIdAndDelete).toHaveBeenCalledWith(req.params.id);
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                message: 'Sala deletada com sucesso.',
+                room: deletedRoom
+            });
+        });
+
+        // Test case: attempt to delete a non-existent room
+        it('deve retornar erro ao tentar deletar uma sala inexistente', async () => {
+            // Mock request object
+            const req = {
+                params: { id: 'nonExistentId' }
+            };
+
+            // Mock response object
+            const res = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn()
+            };
+
+            // Mock Room.findByIdAndDelete to return null (room not found)
+            Room.findByIdAndDelete.mockResolvedValue(null);
+
+            // Call the function
+            await roomController.delete(req, res);
+
+            // Verify that the necessary functions were called with correct parameters
+            expect(Room.findByIdAndDelete).toHaveBeenCalledWith(req.params.id);
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Sala não encontrada.' });
+        });
+
+    //     // Test case: handle server error during deletion
+    //     it('deve lidar com erros de servidor durante a remoção', async () => {
+    //         // Mock request object
+    //         const req = {
+    //             params: { id: 'roomId123' }
+    //         };
+
+    //         // Mock response object
+    //         const res = {
+    //             status: jest.fn().mockReturnThis(),
+    //             json: jest.fn()
+    //         };
+
+    //         //mock Room.findByIdAndDelete to throw an error
+    //         const errorMessage = 'Delete operation failed';
+    //         Room.findByIdAndDelete.mockRejectedValue(new Error(errorMessage));
+
+    //         // Call the function
+    //         await roomController.delete(req, res);
+
+    //         // Verify that the error is handled correctly
+    //         expect(res.status).toHaveBeenCalledWith(500);
+    //         expect(res.json).toHaveBeenCalledWith({
+    //             error: 'Erro ao deletar a sala',
+    //             detalhes: errorMessage
+    //         });
+    // });    
     });
 
 });

@@ -1,5 +1,5 @@
 // authMiddlewares.test.js
-describe('Auth Middlewares', () => {
+describe('', () => {
     it.skip('temporariamente desativado até implementação', () => {});
   });
   

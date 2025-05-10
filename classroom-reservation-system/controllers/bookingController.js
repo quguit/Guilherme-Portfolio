@@ -151,18 +151,76 @@ exports.registerKeyReturn = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Erro ao registrar devolução da chave.', detalhes: error.message });
 }
-}
+};
 
-
-// Listar todas as reservas por ID do usuário
-exports.listByUser = async (req, res) => {
+// Função generalizada para listar reservas com filtros
+exports.list = async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { 
+      user_id, 
+      room_id, 
+      status_booking, 
+      active_only, 
+      start_date, 
+      end_date 
+    } = req.query;
 
-    const bookings = await Booking.find({ user_id: user_id })
-      .populate('room_id', 'number type')
-      .populate('user_id', 'name email');
+    // Construir o objeto de filtros
+    const filters = {};
 
+    // Filtro por usuário
+    if (user_id) {
+      filters.user_id = user_id;
+    }
+
+    // Filtro por sala
+    if (room_id) {
+      filters.room_id = room_id;
+    }
+
+    // Filtro por status da reserva
+    if (status_booking) {
+      filters.status_booking = status_booking;
+    }
+
+    // Filtro por data
+    const dateFilters = {};
+    
+    if (start_date) {
+      dateFilters.$gte = new Date(start_date);
+    }
+    
+    if (end_date) {
+      dateFilters.$lte = new Date(end_date);
+    }
+    
+    if (Object.keys(dateFilters).length > 0) {
+      filters.start_time = dateFilters;
+    }
+
+    // Filtro para reservas ativas (data de início maior ou igual à data atual)
+    if (active_only === 'true') {
+      const currentDate = new Date();
+      // Garantir que exista o filtro de data de início
+      filters.end_time = filters.end_time || {};
+      // Adicionar condição para data de término ser maior ou igual à data atual
+      filters.end_time.$gte = currentDate;
+    }
+
+    // Buscar reservas com os filtros aplicados
+    const bookings = await Booking.find(filters)
+      .populate('room_id', 'number type responsibles')
+      .populate('user_id', 'name email')
+      .populate({
+        path: 'room_id',
+        populate: {
+          path: 'responsibles',
+          select: 'name email'
+        }
+      })
+      .sort({ start_time: 1 }); // Ordenar por data de início, do mais próximo para o mais distante
+
+    // Formatar os dados da resposta
     const formatted = bookings.map(b => ({
       id: b._id,
       date: {
@@ -170,27 +228,27 @@ exports.listByUser = async (req, res) => {
         end: b.end_time
       },
       room: {
+        id: b.room_id?._id || 'ID não encontrado',
         number: b.room_id?.number || 'Sala não encontrada',
         type: b.room_id?.type || 'Tipo não encontrado'
       },
       person_in_charge: {
+        id: b.user_id?._id || 'ID não encontrado',
         name: b.user_id?.name || 'Usuário não encontrado',
         email: b.user_id?.email || 'Email não encontrado'
       },
       status: b.status_booking,
       key_return: b.key_return,
       purpose: b.purpose,
-      responsible_teachers: b.room_id?.responsibles.map(r => ({
+      responsible_teachers: b.room_id?.responsibles?.map(r => ({
         name: r.name,
         email: r.email
-      })),
-      
-
+      })) || []
     }));
 
     res.status(200).json({
       total: bookings.length,
-      bookings
+      bookings: formatted
     });
   } catch (error) {
     res.status(500).json({
@@ -198,4 +256,50 @@ exports.listByUser = async (req, res) => {
       detalhes: error.message
     });
   }
-}
+};
+
+// // Listar todas as reservas por ID do usuário
+// exports.listByUser = async (req, res) => {
+//   try {
+//     const { user_id } = req.params;
+
+//     const bookings = await Booking.find({ user_id: user_id })
+//       .populate('room_id', 'number type')
+//       .populate('user_id', 'name email');
+
+//     const formatted = bookings.map(b => ({
+//       id: b._id,
+//       date: {
+//         start: b.start_time,
+//         end: b.end_time
+//       },
+//       room: {
+//         number: b.room_id?.number || 'Sala não encontrada',
+//         type: b.room_id?.type || 'Tipo não encontrado'
+//       },
+//       person_in_charge: {
+//         name: b.user_id?.name || 'Usuário não encontrado',
+//         email: b.user_id?.email || 'Email não encontrado'
+//       },
+//       status: b.status_booking,
+//       key_return: b.key_return,
+//       purpose: b.purpose,
+//       responsible_teachers: b.room_id?.responsibles.map(r => ({
+//         name: r.name,
+//         email: r.email
+//       })),
+      
+
+//     }));
+
+//     res.status(200).json({
+//       total: bookings.length,
+//       bookings
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       error: 'Erro ao buscar reservas',
+//       detalhes: error.message
+//     });
+//   }
+// }
