@@ -1,11 +1,11 @@
 //import 
-const roomController = require('../../controllers/roomController');
-const Room = require('../../models/Room');
+const roomController = require('../../../controllers/roomController');
+const Room = require('../../../models/Room');
 
 
 
 //Mock room model
-jest.mock('../../models/Room', () => ({
+jest.mock('../../../models/Room', () => ({
     findOne: jest.fn(),
     create: jest.fn(),
     find: jest.fn().mockReturnThis(),
