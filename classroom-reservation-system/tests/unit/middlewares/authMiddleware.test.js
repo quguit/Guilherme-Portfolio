@@ -69,42 +69,42 @@ describe('authMiddleware', () => {
 
     });
 
-      // Test case: Expired token
-  test('deve retornar erro 403 quando o token está expirado', () => {
-    // Arrange
-    req.headers.authorization = 'Bearer expired_token';
-    jwt.verify.mockImplementation(() => {
-      const error = new Error('Token expirado');
-      error.name = 'TokenExpiredError';
-      throw error;
+    // Test case: Expired token
+    it('deve retornar erro 403 quando o token está expirado', () => {
+      // Arrange
+      req.headers.authorization = 'Bearer expired_token';
+      jwt.verify.mockImplementation(() => {
+        const error = new Error('Token expirado');
+        error.name = 'TokenExpiredError';
+        throw error;
+      });
+      
+      // Act
+      authMiddleware(req, res, next);
+      
+      // Assert
+      expect(jwt.verify).toHaveBeenCalledWith('expired_token', 'test_secret');
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Token inválido ou expirado' });
+      expect(next).not.toHaveBeenCalled();
     });
-    
-    // Act
-    authMiddleware(req, res, next);
-    
-    // Assert
-    expect(jwt.verify).toHaveBeenCalledWith('expired_token', 'test_secret');
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Token inválido ou expirado' });
-    expect(next).not.toHaveBeenCalled();
-  });
 
-  // Test case: Valid token
-  test('deve chamar next() e adicionar usuário decodificado ao request quando o token é válido', () => {
-    // Arrange
-    const mockUser = { id: 123, user_type: 'admin' };
-    req.headers.authorization = 'Bearer valid_token';
-    jwt.verify.mockReturnValue(mockUser);
-    
-    // Act
-    authMiddleware(req, res, next);
-    
-    // Assert
-    expect(jwt.verify).toHaveBeenCalledWith('valid_token', 'test_secret');
-    expect(req.user).toEqual(mockUser);
-    expect(next).toHaveBeenCalled();
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
-  });
+    // Test case: Valid token
+    it('deve chamar next() e adicionar usuário decodificado ao request quando o token é válido', () => {
+      // Arrange
+      const mockUser = { id: 123, user_type: 'admin' };
+      req.headers.authorization = 'Bearer valid_token';
+      jwt.verify.mockReturnValue(mockUser);
+      
+      // Act
+      authMiddleware(req, res, next);
+      
+      // Assert
+      expect(jwt.verify).toHaveBeenCalledWith('valid_token', 'test_secret');
+      expect(req.user).toEqual(mockUser);
+      expect(next).toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
 
 });
