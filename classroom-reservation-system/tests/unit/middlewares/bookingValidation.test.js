@@ -36,7 +36,8 @@ describe('Booking Validation Middleware', () => {
     expect(validateBookingCreate.length).toBe(5);
 
     // Check that the body function was called for each required field
-    expect(validationResult.body).toHaveBeenCalledTimes(4);
+    const { body } = require('express-validator');
+    expect(body).toHaveBeenCalledTimes(4);
   });
 
   // Test case: Error handler middleware returns 400 when validation errors exist
@@ -69,12 +70,19 @@ describe('Booking Validation Middleware', () => {
     expect(validationResult).toHaveBeenCalledWith(req);
     expect(mockErrors.isEmpty).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ errors: expect.any(Array) });
+    expect(res.json).toHaveBeenCalledWith({
+      erros: [
+        {param: 'room_id', msg: 'Room ID is required'},
+        {param: 'start_time', msg: 'Start time is required'},
+        {param: 'end_time', msg: 'End time is required'},
+        {param: 'purpose', msg: 'Purpose is required'}
+      ]
+    });
     expect(next).not.toHaveBeenCalled();
   });
 
   // Test case: Error handler middleware calls next() when no validation erors
-  if('deve chamar next() quando não houver errors de validação', () => {
+  it('deve chamar next() quando não houver errors de validação', () => {
     // Arrange
     const req = {};
     const res = {
