@@ -1,4 +1,4 @@
-
+// This file is responsible for configuring the email service using nodemailer.
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
