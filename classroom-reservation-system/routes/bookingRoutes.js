@@ -14,7 +14,7 @@ router.put('/:id/status', auth, permit('teacher'), bookingController.updateStatu
 router.post('/', auth, validateBookingCreate, bookingController.create);
 
 // rota para listar reservas por usuário (autenticado)
-router.get('/user/:user_id', auth, bookingController.listByUser);
+router.get('/user/:user_id', auth, bookingController.list);
 
 //PATCH: devolução da chave
 router.patch('/:id/return', auth, permit('teacher', 'servant'), bookingController.registerKeyReturn);

@@ -7,8 +7,6 @@ const app = require('./app/app')
 connectDB();
 
 
-
-
 // ✅ Iniciar servidor
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
