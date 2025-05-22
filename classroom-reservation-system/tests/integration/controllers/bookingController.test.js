@@ -1,259 +1,221 @@
-describe('', () => {
-    it.skip('temporariamente desativado até implementação', () => {});
+const request = require('supertest');
+const mongoose = require('mongoose');
+const app = require('../../../app/app'); 
+const User = require('../../../models/User');
+const Room = require('../../../models/Room');
+const Booking = require('../../../models/Booking');
+
+const MONGO_TEST_URI = 'mongodb://localhost:27017/booking_test'; 
+
+describe('Booking Controller - Integração', () => {
+  let studentToken, teacherToken;
+  let student, teacher, room;
+
+  beforeAll(async () => {
+    await mongoose.connect(MONGO_TEST_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    // Limpa DB
+    await User.deleteMany({});
+    await Room.deleteMany({});
+    await Booking.deleteMany({});
+
+    // Cria usuários
+    student = await User.create({
+      name: 'Aluno Teste',
+      email: 'aluno@example.com',
+      password: '123456',
+      type_user: 'student'
+    });
+
+    teacher = await User.create({
+      name: 'Professor Teste',
+      email: 'prof@example.com',
+      password: '123456',
+      type_user: 'teacher'
+    });
+
+    // Cria sala com professor responsável
+    room = await Room.create({
+      number: 'A101',
+      type: 'lab',
+      responsibles: [teacher._id]
+    });
+
+    // Simula tokens — aqui simplificando para uso direto
+    studentToken = generateTestToken(student);
+    teacherToken = generateTestToken(teacher);
   });
-  
 
-// /* Testar o comportamento da função create sob diferentes cenários, como:
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
 
-// Dados válidos → deve criar uma reserva.
+  describe('POST /bookings - Criação de reserva', () => {
+    it('Aluno deve conseguir criar uma reserva pendente com professor responsável', async () => {
+      const res = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${studentToken}`)
+        .send({
+          room_id: room._id,
+          start_time: new Date(Date.now() + 3600000), // +1h
+          end_time: new Date(Date.now() + 7200000),   // +2h
+          purpose: 'Apresentação de projeto',
+          requested_teacher: teacher._id
+        });
 
-// Dados ausentes → deve retornar erro 400.
+      expect(res.statusCode).toBe(201);
+      expect(res.body.booking.status_booking).toBe('pending');
+      expect(res.body.booking.room_id).toBe(room._id.toString());
+    });
 
-// Conflito de horários → deve retornar erro 409.
+    it('Professor deve conseguir criar uma reserva já aprovada', async () => {
+    const res = await request(app)
+      .post('/bookings')
+      .set('Authorization', `Bearer ${teacherToken}`)
+      .send({
+        room_id: room._id,
+        start_time: new Date(Date.now() + 10800000), // +3h
+        end_time: new Date(Date.now() + 14400000),   // +4h
+        purpose: 'Aula extra'
+      });
 
-// Estudante sem professor → deve retornar erro 403.*/
-// // Testes de integração para o controller de criação de reservas
+    expect(res.statusCode).toBe(201);
+    expect(res.body.booking.status_booking).toBe('approved');
+  });
+    it('Deve impedir reserva com conflito de horário', async () => {
+      const res = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${teacherToken}`)
+        .send({
+          room_id: room._id,
+          start_time: new Date(Date.now() + 3600000),  // +1h (conflito com 1º teste)
+          end_time: new Date(Date.now() + 7200000),
+          purpose: 'Tentativa inválida'
+        });
 
-// const request = require('supertest');
-// const jwt = require('jsonwebtoken');
-// const mongoose = require('mongoose');
-// const app = require('../../../app/app');
-// const Booking = require('../../../models/Booking');
-// const Room = require('../../../models/Room');
-// const User = require('../../../models/User');
+      expect(res.statusCode).toBe(409);
+      expect(res.body.error).toMatch(/conflito/i);
+    });
+  });
+});
 
-// function generateToken(user) {
-//     return jwt.sign(user, process.env.JWT_SECRET || 'segredo_teste');
-// }
+function generateTestToken(user) {
+  const jwt = require('jsonwebtoken');
+  const SECRET = 'testsecret'; // igual ao do seu projeto
+  return jwt.sign({
+    id: user._id,
+    type_user: user.type_user,
+    email: user.email
+  }, SECRET, { expiresIn: '1h' });
+}
 
-// // ⬇️ Conectar ao banco antes de qualquer teste
-// beforeAll(async () => {
-//     const uri = process.env.MONGO_URI_TEST || 'mongodb://localhost:27017/testdb';
-//     await mongoose.connect(uri, {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true
-//     });
-//   });
+  describe('PUT /bookings/:id/status - Atualização de status', () => {
+    let bookingToApprove;
 
+    beforeAll(async () => {
+      // Cria nova reserva pendente para teste
+      bookingToApprove = await Booking.create({
+        user_id: student._id,
+        room_id: room._id,
+        start_time: new Date(Date.now() + 21600000), // +6h
+        end_time: new Date(Date.now() + 25200000),   // +7h
+        purpose: 'Reserva pendente',
+        requested_teacher: teacher._id,
+        status_booking: 'pending'
+      });
+    });
 
-// // ⬇️ Limpar o banco após cada teste
-// afterEach(async () => {
-//     await Booking.deleteMany();
-//     await Room.deleteMany();
-//     await User.deleteMany();
-// });
+    it('Professor responsável deve aprovar a reserva', async () => {
+      const res = await request(app)
+        .put(`/bookings/${bookingToApprove._id}/status`)
+        .set('Authorization', `Bearer ${teacherToken}`)
+        .send({ status_booking: 'approved' });
 
-// // ⬇️ Desconectar ao final de todos os testes
-// afterAll(async () => {
-//     await mongoose.disconnect();
-// });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.booking.status_booking).toBe('approved');
+    });
 
-  
-// describe('Booking Controller - Create', () => {
+    it('Aluno não deve conseguir alterar status da reserva', async () => {
+      const res = await request(app)
+        .put(`/bookings/${bookingToApprove._id}/status`)
+        .set('Authorization', `Bearer ${studentToken}`)
+        .send({ status_booking: 'rejected' });
 
-//     // Mock de requisição para uso em testes unitários
-//     const mockReq = {
-//         body: {
-//             room_id: 'fakeRoomId',
-//             start_time: new Date(),
-//             end_time: new Date(Date.now() + 60 * 60 * 1000),
-//             purpose: 'Aula de teste',
-//             requested_teacher: 'professorId'
-//         },
-//         user: {
-//             id: 'user123',
-//             type_user: 'student'
-//         }
-//     };
+      expect(res.statusCode).toBe(403);
+      expect(res.body.error).toMatch(/apenas professores/i);
+    });
+  });
 
-//     // Mock de resposta (usado apenas em teste unitário direto do controller)
-//     const mockRes = {
-//         status: jest.fn().mockReturnThis(),
-//         json: jest.fn()
-//     };
+    describe('PATCH /bookings/:id/key-return - Devolução de chave', () => {
+    let keyBooking;
 
-//     // Certifique-se de que o beforeEach está dentro de um bloco com testes
-//     beforeEach(() => {
-//         jest.clearAllMocks();
-//     });
+    beforeAll(async () => {
+      // Cria reserva aprovada
+      keyBooking = await Booking.create({
+        user_id: teacher._id,
+        room_id: room._id,
+        start_time: new Date(Date.now() + 30000000), // +8h
+        end_time: new Date(Date.now() + 30600000),
+        purpose: 'Teste devolução',
+        status_booking: 'approved',
+        key_return: false
+      });
+    });
 
-//     /** 1. Deve retornar 400 se campos obrigatórios estiverem ausentes */
-//     it('deve retornar 400 para campos obrigatórios ausentes', async () => {
-//         const req = { ...mockReq, body: { ...mockReq.body, purpose: undefined } };
-//         await require('../../../controllers/bookingController').create(req, mockRes);
+    it('Deve registrar a devolução de chave com sucesso', async () => {
+      const res = await request(app)
+        .patch(`/bookings/${keyBooking._id}/key-return`)
+        .set('Authorization', `Bearer ${teacherToken}`);
 
-//         expect(mockRes.status).toHaveBeenCalledWith(400);
-//         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Campos obrigatórios ausentes.' });
-//     });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.booking.key_return).toBe(true);
+    });
 
-//     /** 2. Deve retornar 404 se a sala não for encontrada no banco */
-//     it('deve retornar 404 se a sala não for encontrada', async () => {
-//         const user = await User.create({
-//             name: 'Fake User',
-//             email: 'fake@email.com',
-//             password: 'Teste@1234',
-//             type_user: 'teacher',
-//             identification: '999'
-//         });
+    it('Não deve permitir devolução duplicada', async () => {
+      const res = await request(app)
+        .patch(`/bookings/${keyBooking._id}/key-return`)
+        .set('Authorization', `Bearer ${teacherToken}`);
 
-//         const token = generateToken({ id: user._id, type_user: user.type_user });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.error).toMatch(/já foi devolvida/i);
+    });
+  });
 
-//         const res = await request(app)
-//             .post('/api/bookings')
-//             .set('Authorization', `Bearer ${token}`)
-//             .send({
-//                 room_id: new mongoose.Types.ObjectId(), // ID de sala inexistente
-//                 start_time: '2025-04-30T11:00:00',
-//                 end_time: '2025-04-30T13:00:00',
-//                 purpose: 'Tentativa de reserva'
-//             });
+    describe('GET /bookings - Listagem com filtros', () => {
+    it('Deve listar todas as reservas do banco', async () => {
+      const res = await request(app)
+        .get('/bookings')
+        .set('Authorization', `Bearer ${teacherToken}`);
 
-//         expect(res.statusCode).toBe(404);
-//         expect(res.body).toHaveProperty('error', 'Sala não encontrada.');
-//     });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.total).toBeGreaterThan(0);
+      expect(Array.isArray(res.body.bookings)).toBe(true);
+    });
 
-//     // Outros testes continuam aqui...
+    it('Deve filtrar reservas por status', async () => {
+      const res = await request(app)
+        .get('/bookings')
+        .query({ status_booking: 'approved' })
+        .set('Authorization', `Bearer ${teacherToken}`);
 
+      expect(res.statusCode).toBe(200);
+      res.body.bookings.forEach(b => {
+        expect(b.status).toBe('approved');
+      });
+    });
 
+    it('Deve filtrar reservas ativas (futuras)', async () => {
+      const res = await request(app)
+        .get('/bookings')
+        .query({ active_only: 'true' })
+        .set('Authorization', `Bearer ${teacherToken}`);
 
-//     /** 3. Deve retornar 409 se houver conflito de horário com outra reserva existente */
-//     it('deve retornar erro de conflito de horário', async () => {
-//         const room = await Room.create({ number: '101', type: 'classroom', capacity: 30 });
-//         const user = await User.create({
-//             name: 'João',
-//             email: 'joao@email.com',
-//             password: 'Teste@1234',
-//             type_user: 'teacher',
-//             identification: '1122'
-//         });
-
-//         // Reserva já existente no mesmo horário
-//         await Booking.create({
-//             user_id: user._id,
-//             room_id: room._id,
-//             start_time: new Date('2025-04-30T10:00:00'),
-//             end_time: new Date('2025-04-30T12:00:00'),
-//             purpose: 'Aula de física',
-//         });
-
-//         const token = generateToken({ id: user._id, type_user: user.type_user });
-
-//         const res = await request(app)
-//             .post('/api/bookings')
-//             .set('Authorization', `Bearer ${token}`)
-//             .send({
-//                 room_id: room._id,
-//                 start_time: '2025-04-30T11:00:00',
-//                 end_time: '2025-04-30T13:00:00',
-//                 purpose: 'Aula de matemática'
-//             });
-
-//         expect(res.statusCode).toBe(409);
-//         expect(res.body).toHaveProperty('error');
-//     });
-
-//     /** 4. Deve retornar 403 se estudante tentar reservar sem professor responsável */
-//     it('deve retornar erro se estudante não indicar professor responsável', async () => {
-//         const room = await Room.create({
-//             number: '102',
-//             type: 'laboratory',
-//             capacity: 25,
-//             responsibles: ['507f1f77bcf86cd799439011']
-//         });
-
-//         const user = await User.create({
-//             name: 'Aluno',
-//             email: 'aluno@email.com',
-//             password: 'Teste@1234',
-//             type_user: 'student',
-//             identification: '112'
-//         });
-
-//         const token = generateToken({ id: user._id, type_user: user.type_user });
-
-//         const res = await request(app)
-//             .post('/api/bookings')
-//             .set('Authorization', `Bearer ${token}`)
-//             .send({
-//                 room_id: room._id,
-//                 start_time: '2025-05-01T14:00:00',
-//                 end_time: '2025-05-01T16:00:00',
-//                 purpose: 'Estudo em grupo'
-//             });
-
-//         expect(res.statusCode).toBe(403); // retornado 400 rever controllers
-//         expect(res.body).toHaveProperty('error');
-//         expect(res.body.error).toMatch(/professor responsável/i);           
-//     });
-
-//     /** 5. Deve criar a reserva com sucesso se tudo estiver correto */
-//     it('deve criar reserva com sucesso para professor', async () => {
-//         const room = await Room.create({ number: '103', type: 'laboratory', capacity: 15 });
-//         const user = await User.create({
-//             name: 'Prof Girafales',
-//             email: 'profg@email.com',
-//             password: 'Test@1234',
-//             type_user: 'teacher',
-//             identification: '113'
-//         });
-
-//         const token = generateToken({ id: user._id, type_user: user.type_user });
-
-//         const res = await request(app)
-//             .post('/api/bookings')
-//             .set('Authorization', `Bearer ${token}`)
-//             .send({
-//                 room_id: room._id,
-//                 start_time: '2025-05-02T08:00:00',
-//                 end_time: '2025-05-02T10:00:00',
-//                 purpose: 'Aula prática'
-//             });
-
-//         expect(res.statusCode).toBe(201);
-//         expect(res.body).toHaveProperty('message');
-//         expect(res.body.booking).toHaveProperty('_id');
-//     });
-
-//     it('deve criar reserva pendente para aluno com professor indicado', async () => {
-//         const teacher = await User.create({
-//           name: 'Prof Responsável',
-//           email: 'prof@email.com',
-//           password: 'Teste@1234',
-//           type_user: 'teacher',
-//           identification: '2025'
-//         });
-    
-//         const room = await Room.create({
-//             number: '104',
-//             type: 'laboratory',
-//             capacity: 20,
-//             responsibles: [teacher._id]
-//         });
-        
-//         const student = await User.create({
-//             name: 'Estudante Teste',
-//             email: 'estudante@email.com',
-//             password: 'Teste@1234',
-//             type_user: 'student',
-//             identification: '2244'
-//         });
-    
-//         const token = generateToken({ id: student._id, type_user: student.type_user });
-        
-//         const res = await request(app)
-//             .post('/api/bookings')
-//             .set('Authorization', `Bearer ${token}`)
-//             .send({
-//             room_id: room._id,
-//             start_time: '2025-05-03T08:00:00',
-//             end_time: '2025-05-03T10:00:00',
-//             purpose: 'Reunião de projeto',
-//             status_booking: 'pending',
-//             requested_teacher: teacher._id
-//             });
-        
-//         expect(res.statusCode).toBe(201); //retornando 500 rever controllers
-//         // expect(res.body.booking.status_booking).toBe('pending');
-//     }); 
-    
-// });
+      expect(res.statusCode).toBe(200);
+      res.body.bookings.forEach(b => {
+        expect(new Date(b.date.end) >= new Date()).toBe(true);
+      });
+    });
+  });
