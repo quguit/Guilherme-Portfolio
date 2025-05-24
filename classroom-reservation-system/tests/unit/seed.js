@@ -2,8 +2,8 @@
 require('dotenv').config();
 
 const mongoose = require('mongoose');
-const User = require('../models/User');
-const Room = require('../models/Room');
+const User = require('../../models/User');
+const Room = require('../../models/Room');
 const bcrypt = require('bcrypt');
 const { status } = require('express/lib/response');
 const res = require('express/lib/response');
