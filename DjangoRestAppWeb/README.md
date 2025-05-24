@@ -1,4 +1,4 @@
-python# Django REST Web App
+# Django REST Web App
 
 A Django REST Web App is a web application built with Django and Django REST Framework (DRF), featuring authentication, a login system, database management, deployment setup, and more.
 
