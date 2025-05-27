@@ -1,3 +1,4 @@
+// switch screens
 function showLogin() {
   const navbar = document.getElementById('navbar');
   navbar.classList.add('bg-dark');
@@ -56,5 +57,26 @@ fetch("http://localhost:3000/api/login", {
     window.location.href = "dashboard.html";
   } else {
     alert("Erro ao fazer login")
+  }
+});
+
+// 🟢 Login
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  try {
+    const response = await axios.post('http://localhost:3000/api/login', { email, password});
+    const data = response.data;
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("userName", data.user.name);
+    localStorage.setItem("userType", data.user.type_user);
+    window.location.href = "dashboard.html";
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao fazer login. Verifique suas credenciais.");
   }
 });
