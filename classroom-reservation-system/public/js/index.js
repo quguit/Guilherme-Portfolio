@@ -80,3 +80,41 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     alert("Erro ao fazer login. Verifique suas credenciais.");
   }
 });
+
+// 🟢 Register
+document.getElementById('registerForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const name = `${document.getElementById("firstName").value} ${document.getElementById("lastName").value}`;
+  const email = document.getElementById('email').value;
+  const phone = document.getElementById(phone).value;
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  const userType = document.getElementById('userType').value;
+  const identification = document.getElementById('identificationInput').value;
+
+  if (password !== confirmPassword) {
+    return alert('As senhas não coincidem.');
+  } 
+  
+  try {
+    const res = await axios.post('http://localhost:3000/api/register', {
+      name,
+      email,
+      phone,
+      password,
+      userType,
+      identification
+    });
+
+    if (res.data.success) {
+      alert('Cadastro realizado com sucesso!');
+      showLogin();
+    } else {
+      alert('Erro ao cadastrar. Tente novamente.');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao cadastrar. Verifique os dados e tente novamente.');
+  }
+});
