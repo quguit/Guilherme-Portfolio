@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("userName").textContent = userName;
 
   // Load default content (home page or dashboard cards)
-  renderDashboard("professor"); // Replace with logic for actual user type
-  loadContent("../pages/home.html"); // Optional: create home.html with intro
+  const userType = localStorage.getItem("userType");
+  renderDashboard(userType); 
 
   // Add sidebar link click events
   document.querySelectorAll(".nav-link").forEach(link => {
