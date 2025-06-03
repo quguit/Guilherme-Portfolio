@@ -21,4 +21,3 @@ document.addEventListener("DOMContentLoaded", () => {
             })
         .catch(err => console.error("Erro ao carregar reservas:", err));
         });
-})

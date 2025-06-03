@@ -60,6 +60,14 @@ function loadContent(pagePath) {
     })
     .then(html => {
       document.getElementById("contentArea").innerHTML = html;
+
+      // Força execução de script específico se necessário
+      if (pagePath.includes("bookingForm")) {
+        loadScript("../js/bookingForm.js");
+      } else if (pagePath.includes("bookingList")) {
+        loadScript("../js/bookingList.js");
+      }
+      // profile já carrega com <script> embutido no HTML, então não precisa
     })
     .catch(err => {
       document.getElementById("contentArea").innerHTML = `<p class="text-danger">${err.message}</p>`;
@@ -97,4 +105,10 @@ function getCardHTML(title, text, link) {
         </div>
       </div>
     </div>`;
+}
+
+function loadScript(path) {
+  const script = document.createElement("script");
+  script.src = path;
+  document.body.appendChild(script);
 }
