@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${b.room}</td>
                         <td>${b.user}</td>
                         <td><span class="badge bg-success">${b.status}</span></td>
-                        <td><span class="badge bg-warning text-dark">Pedente</span></td>
+                        <td><span class="badge bg-warning text-dark">Pendente</span></td>
                         <td><button class="btn btn-sm btn-outline-primary">Confirmar Chave</button></td>
                     </td>
                 `;
