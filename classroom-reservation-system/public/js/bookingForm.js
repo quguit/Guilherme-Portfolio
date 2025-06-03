@@ -1,26 +1,34 @@
+document.getElementById("bookingRequestForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
 
+  const user = JSON.parse(localStorage.getItem("userData"));
+  if (!user) return alert("Usuário não autenticado.");
 
-document.getElementById("bookingRequestForm").addEventListener("submit", function(e) {
-    e.preventDefault(); 
-    
-    const bookingData = {
-        room: document.getElementById("room").value,
-        date: document.getElementByid("date").value,
-        startTime: document.getElementById("startTime").value,
-        endTime: document.getElementById("endTime").value,
-        reason: document.getElementById("reason").value.trim(),
+  const room_id = document.getElementById("roomSelect").value;
+  const start_time = document.getElementById("startTime").value;
+  const end_time = document.getElementById("endTime").value;
+  const purpose = document.getElementById("reason").value.trim();
+  const requested_teacher = document.getElementById("teacherSelect")?.value || null;
 
-        //simulates logged-in user
-        user:JSON.parse(localStorage.getItem("userData"))?.email || "email@exemplo.com" 
-    };
+  const payload = {
+    room_id,
+    start_time,
+    end_time,
+    purpose,
+    requested_teacher: requested_teacher || undefined
+  };
 
-    axios.post("/api/bookings", bookingData)
-    .then(res => {
-      alert("Reserva solicitada com sucesso!");
-      document.getElementById("bookingRequestForm").reset();
-    })
-    .catch(err => {
-      const message = err.response?.data?.error || err.message || "Erro desconhecido.";
-      alert("Erro ao criar reserva: " + message);
+  try {
+    const res = await axios.post("/api/bookings", payload, {
+      headers: {
+        Authorization: `Bearer ${user.token}` // ou `user.accessToken`, se estiver assim
+      }
     });
+
+    alert(res.data.message || "Reserva enviada!");
+    document.getElementById("bookingRequestForm").reset();
+  } catch (err) {
+    const msg = err.response?.data?.error || "Erro ao enviar reserva.";
+    alert(msg);
+  }
 });
