@@ -21,27 +21,41 @@
         </div>
       </div>
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Simulação de dados do localStorage
-      const userData = JSON.parse(localStorage.getItem("userData")) || {
-        name: "Usuário de Exemplo",
-        email: "usuario@exemplo.com",
-        identification: "123456",
-        type_user: "student"
-      };
-  
-      document.getElementById("profileName").textContent = userData.name;
-      document.getElementById("profileEmail").textContent = userData.email;
-      document.getElementById("profileIdentification").textContent = userData.identification;
+    document.addEventListener("DOMContentLoaded", async () => {
       
-      const userTypeMap = {
-        student: "Aluno",
-        teacher: "Professor",
-        servant: "Servidor"
-      };
-  
-      document.getElementById("profileType").textContent = userTypeMap[userData.type_user] || "Desconhecido";
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || !userData.token) {
+        alert("Usuário não autenticado. Redirecionando para a página de login.");
+        window.location.href = "index.html";
+        return;
+      }
+      try{
+        const res = await axios.get("/api/users/profile", {
+          headers: {
+            Authorization: `Bearer ${userData.token}`
+          }
+        });
+
+        const data = res.data;
+        document.getElementById("profileName").textContent = data.name;
+        document.getElementById("profileEmail").textContent = data.email;
+        document.getElementById("profileIdentification").textContent = data.identification;
+        
+        const userTypeMap = {
+          student: "Aluno",
+          teacher: "Professor",
+          servant: "Servidor"
+        };
+    
+        document.getElementById("profileType").textContent = userTypeMap[userData.type_user] || "Desconhecido";
+    
+      } catch (err) {
+        console.error("Erro ao carregar perfil:", err);
+        alert("Erro ao carregar informações do perfil");
+      }
     });
   </script>
 </html>
