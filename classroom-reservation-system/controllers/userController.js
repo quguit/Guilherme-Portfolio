@@ -177,3 +177,21 @@ exports.list = async (req, res) => {
     res.status(500).json({ error: "Erro ao listar usuários", detalhes: err.message });
   }
 };
+
+exports.profile = async (req, res) => {
+  try {
+    const user = req.user; // `req.user` foi preenchido pelo middleware de autenticação
+
+    if (!user) return res.status(401).json({ error: "Não autenticado" });
+
+    res.json({
+      name: user.name,
+      email: user.email,
+      identification: user.identification,
+      type_user: user.type_user
+    });
+  } catch (err) {
+    console.error("Erro ao carregar perfil:", err);
+    res.status(500).json({ error: "Erro interno ao buscar perfil" });
+  }
+};
