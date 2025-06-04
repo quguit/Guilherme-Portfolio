@@ -37,16 +37,32 @@ document.getElementById("bookingRequestForm").addEventListener("submit", async f
     alert(msg);
   }
 });
-document.addEventListener("DOMContentLoaded", () => {
-  axios.get("/api/rooms")
-    .then(res => {
-      const select = document.getElementById("roomSelect");
-      res.data.forEach(room => {
-        const option = document.createElement("option");
-        option.value = room._id;
-        option.textContent = `${room.number} - ${room.type}`;
-        select.appendChild(option);
-      });
-    })
-    .catch(err => console.error("Erro ao carregar salas:", err));
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // loading rooms
+    const roomRes = await axios.get("/api/rooms");
+    const roomSelect = document.getElementById("roomSelect");
+
+    roomRes.data.forEach(room => {
+      const option = document.createElement("option");
+      option.value = room._id;
+      option.textContent = `${room.number} - ${room.type}`;
+      roomSelect.appendChild(option);
+    });
+
+    // loading teachers
+    const teacherRes = await axios.get("/api/users?type=teacher");
+    const teacherSelect = document.getElementById("teacherSelect");
+
+    teacherRes.data.forEach(teacher => {
+      const option = document.createElement("option");
+      option.value = teacher._id;
+      option.textContent = `${teacher.name} (${teacher.email})`;
+      teacherSelect.appendChild(option);
+    });
+
+  }catch (err) {
+    console.error("Erro ao carregar dados:", err);
+  }
 });

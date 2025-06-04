@@ -160,3 +160,20 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ error: 'Erro ao redefinir a senha.', detalhes: error.message });
       }
 };
+
+
+const User = require('../models/User');
+
+exports.list = async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.type) {
+      filter.type_user = req.query.type;
+    }
+
+    const users = await User.find(filter).select("name email type_user");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao listar usuários", detalhes: err.message });
+  }
+};
