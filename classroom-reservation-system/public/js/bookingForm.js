@@ -11,7 +11,7 @@ document.getElementById("bookingRequestForm").addEventListener("submit", async f
   const date = document.getElementById("date").value;
   const start = document.getElementById("startTime").value;
   const end = document.getElementById("endTime").value;
-
+  // data e hora completas para o backend
   const start_time = new Date(`${date}T${start}`);
   const end_time = new Date(`${date}T${end}`);
 
